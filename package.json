@@ -1,0 +1,17 @@
+{
+  "name": "flexie_ws",
+  "version": "1.0.0",
+  "description": "Web socket example on node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "d3": "^3.5.12",
+    "express": "^4.13.3",
+    "nodemon": "^1.8.1",
+    "socket.io": "^1.4.3"
+  }
+}

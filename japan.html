@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Sample 01</title>
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="/bower_components/d3/d3.min.js"></script>
+<script src="/bower_components/topojson/topojson.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+
+$(function(){
+//	日本地図
+var topoJsonUrl = "/json/japan.topo.json";
+
+//	変数設定
+var width = 500,
+    height = 500,
+    scale = 1;
+
+// Color 
+var color = d3.scale.category10();
+
+// bodyにSVGをつくり、g(地図グループ）を作る
+var svg = d3.select("body").append("svg")
+	.attr("width", width)
+	.attr("height", height)
+
+svg.append("g").attr("id", "all-g");
+
+//投影法の設定
+var projection = d3.geo.mercator()
+		.center([138, 38])
+		.scale(2400)
+		.translate([width / 2, height / 2]);
+    
+// 地図読み込み
+d3.json(topoJsonUrl, function(error, uk) {
+  if (error) return console.error(error);
+  console.log(uk);
+  onLoadMap(uk);
+});
+
+//d3.json(topoJsonUrl, onLoadMap);
+
+// データ設定
+var mydata =[
+[135.25508,34.336263],
+[140.039359,35.652929],
+[140.103417,39.706976],
+[139.69194,35.659432]
+];
+
+var pointdata = [
+	{"type": "LineString", "coordinates": [
+		[135.25508,34.336263],
+		[140.039359,35.652929]
+		]
+  	},
+	{"type": "LineString", "coordinates": [
+		[140.103417,39.706976],
+		[139.69194,35.659432]
+		]
+
+  	}
+];
+
+
+
+
+
+//==============================//
+//	地図と点を描く		//
+//==============================//
+function onLoadMap (jp) {
+
+	//地図を描く
+	var path = d3.geo.path().projection(projection);
+	var features = topojson.feature(jp, jp.objects.ne_10m_admin_1_states_provinces);
+	d3.select("#all-g")
+        	.append("g").attr("id", "path-g").selectAll("path")
+            	.data(features.features)
+            	.enter()
+            	.append("path")
+            	.attr("fill", "#f0f0f0")
+            	.attr("stroke", "#999")
+            	.attr("stroke-width", 0.5/scale)
+            	.attr("d", path);
+
+	//	点を描く
+	d3.select("#all-g")
+		.append("g").attr("id","circle-g").selectAll("circle")
+		.data(mydata)
+		.enter()
+		.append("circle");
+
+	//	赤く塗る
+	d3.selectAll("#circle-g circle")
+		.attr("fill", function(d, i) { return color(i); } )
+		.attr("opacity", 0.5)
+		.attr("transform", function(d) { 
+			var coord = projection([d[0], d[1]]);
+			return "translate(" + coord.join(",") + ")"; 
+		})
+		.attr("r", 5/scale);
+
+	//都市間を線で結ぶ
+	var line = svg.selectAll(".line")
+			.data(pointdata)
+			.enter()
+			.append("path")
+			.attr({
+				"class":"line",
+				"d": path,
+				"fill": "none",
+				"stroke": function(d, i) { return color(i); } ,
+				"stroke-width": 0.5
+	});
+ }
+});
+
+</script>
+</head>
+<body>
+
+</body>
+</html>
