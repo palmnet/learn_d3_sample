@@ -3,6 +3,13 @@ var list = [];
 var list_all = [];
 
 $(function() {
+  $("#general").click(function(d) {
+    $(".content").html("");
+    $(".content").css("background", "#222234");
+    $(".header").css("background", "#222234");
+    $(".content").css("height", "1200");
+    drawJapan();
+  });
 	
    var width = 600;
    var height = 200;

@@ -17,6 +17,10 @@ app.get('/', function(req, res){
 app.get('/japan', function(req, res){
     res.sendfile('japan.html');
 });
+app.get('/world', function(req, res){
+    res.sendfile('world.html');
+});
+
 
 
 
