@@ -4,8 +4,9 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var d3 = require("d3");
 var redis = require("redis"),
-  client1 = redis.createClient();
-  client2 = redis.createClient();
+  client1 = redis.createClient(),
+  client2 = redis.createClient(),
+  client3 = redis.createClient();
 
 app.use(express.static('public'));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
@@ -23,14 +24,15 @@ app.get('/alarm', function(req, res){
 
 
 
-
 client1.subscribe("spark-alarm");
 client1.on("message", function (channel, message) {
 	client2.incr("total-alarms");
 	client2.get("total-alarms", function(err, replies) {
-    console.log(">>> channel " + channel + " message " + message + " size " + replies);
   });
 });
+
+
+client3.subscribe("node-alarm");
 
 io.sockets.on('connection', function(socket) {
 		socket.on('disconnect', function () {
@@ -67,6 +69,13 @@ io.sockets.on('connection', function(socket) {
 
     });
 
+    client3.on("message", function (channel, message) {
+
+      console.log("channel " + channel + " message " + message);
+      socket.emit("alarm", message, function(data) {
+        console.log('alarm: ' + data);
+      });
+    });
 });
 
 http.listen(3000, function(){
