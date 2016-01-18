@@ -18,8 +18,12 @@ app.get('/', function(req, res){
 app.get('/japan', function(req, res){
     res.sendfile('japan.html');
 });
-app.get('/db', function(req, res){
-    res.sendfile('starter.html');
+app.get('/alarms', function(req, res){
+    res.sendfile('alarms.html');
+});
+
+app.get('/map', function(req, res){
+    res.sendfile('map.html');
 });
 
 
