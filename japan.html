@@ -2,90 +2,52 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>Sample 01</title>
+<title>Alarm map</title>
 <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Squada+One' rel='stylesheet' type='text/css'>
+<!-- bootstrap 3.0.2 -->
+<link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<!-- font Awesome -->
+<link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<!-- Ionicons -->
+<link href="/bower_components/Ionicons/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 <script src="/bower_components/d3/d3.min.js"></script>
 <script src="/bower_components/topojson/topojson.js"></script>
 <script src="/socket.io/socket.io.js"></script>
+<script>
+$(function() {
+  loadMap(d3.select("body"));
+});
+</script>
+
+<script src="/js/google_api.js"></script>
 <script src="/js/japan.js"></script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=<your access key>&callback=initMap"
-  type="text/javascript"></script>
 <style>
 body {
-	background-color: #222234;
+  background-color: #222234;
+	padding-top: 50px;
+  color: silver;
+  font-family: 'Squada One', cursive;
+}
+.mygrid {
+    border: solid red .5px;
+    overflow: scroll;
+    height: 200px;
 }
 .location {
-    font-family: 'Orbitron', serif;
+font-family: 'Squada One', cursive;
     color: white;
     opacity: .1;
     position: absolute;
 }
 
 </style>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
-    <style>
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      #map {
-        height: 100%;
-      }
-#floating-panel {
-  position: absolute;
-  top: 10px;
-  left: 25%;
-  z-index: 5;
-  background-color: #fff;
-  padding: 5px;
-  border: 1px solid #999;
-  text-align: center;
-  font-family: 'Roboto','sans-serif';
-  line-height: 30px;
-  padding-left: 10px;
-}
-
-    </style>
-  </head>
-  <body>
-    <div id="floating-panel">
-      <input id="address" type="textbox" value="Sydney, NSW">
-      <input id="submit" type="button" value="Geocode">
-    </div>
-    <div id="map"></div>
-    <script>
-function initMap() {
-  var map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 8,
-    center: {lat: -34.397, lng: 150.644}
-  });
-  var geocoder = new google.maps.Geocoder();
-
-  document.getElementById('submit').addEventListener('click', function() {
-    geocodeAddress(geocoder, map);
-  });
-}
-
-function geocodeAddress(geocoder, resultsMap) {
-  var address = document.getElementById('address').value;
-  geocoder.geocode({'address': address}, function(results, status) {
-    if (status === google.maps.GeocoderStatus.OK) {
-      resultsMap.setCenter(results[0].geometry.location);
-      var marker = new google.maps.Marker({
-        map: resultsMap,
-        position: results[0].geometry.location
-      });
-    } else {
-      alert('Geocode was not successful for the following reason: ' + status);
-    }
-  });
-}
-
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA68qPX95CJY8pfCYeEQs9nC4tkL1TfOgI&signed_in=true&callback=initMap"
-        async defer></script>
-  </body>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<meta charset="utf-8">
+</head>
+<body>
+</body>
 </html>
+

@@ -18,8 +18,8 @@ app.get('/', function(req, res){
 app.get('/japan', function(req, res){
     res.sendfile('japan.html');
 });
-app.get('/alarm', function(req, res){
-    res.sendfile('alarm.html');
+app.get('/db', function(req, res){
+    res.sendfile('starter.html');
 });
 
 
