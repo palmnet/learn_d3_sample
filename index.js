@@ -26,6 +26,28 @@ app.get('/map', function(req, res){
     res.sendfile('map.html');
 });
 
+app.get('/dashboard', function(req, res){
+    res.sendfile('dashboard.html');
+});
+
+app.get('/area', function(req, res){
+    res.sendfile('area.html');
+});
+app.get('/init_alarms', function(req, res){
+  client2.zrange("alarms",0 ,-1, function(err, data) {
+    if(err) {
+      console.log(err);
+      return;
+    }
+    console.log(data);
+
+    var parsed = data.map(function(elem) {
+      return JSON.parse(elem)
+    });
+    res.json(parsed);
+  });
+});
+
 
 
 client1.subscribe("spark-alarm");

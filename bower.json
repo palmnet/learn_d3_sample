@@ -29,6 +29,7 @@
     "fullcalendar": "~2.6.0",
     "daterangepicker": "~1.4.2",
     "Chart": "chart#*",
-    "topojson": "~1.6.19"
+    "topojson": "~1.6.19",
+    "datatables": "~1.10.10"
   }
 }
