@@ -4,7 +4,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var d3 = require("d3");
 var redis = require("redis"),
-  client1 = redis.createClient(),
+  redis_cli = redis.createClient(),
   client2 = redis.createClient(),
   client3 = redis.createClient(),
   client4 = redis.createClient();
@@ -46,8 +46,24 @@ app.get('/init_alarms', function(req, res){
     res.json(parsed);
   });
 });
+app.get('/top10pref', function(req, res){
+  client2.zrevrange('pref', 0, 10, 'withscores', function(err, members) {
+    if(err) {
+      return;
+    }
+    var results = [];
+    for(var i=0; i<members.length; i+=2) {
+      var row = {pref: members[i], count: members[i+1]};
+      results.push(row);
+    }
+    console.log(results);
+    res.json(results);
+  });
+});
 
 
+
+client3.subscribe("spark-alarm");
 client4.subscribe("send-alarm");
     
 io.sockets.on('connection', function(socket) {
@@ -73,24 +89,22 @@ io.sockets.on('connection', function(socket) {
 
     client4.on("message", function (channel, message) {
       var parsed = JSON.parse(message)
+      redis_cli.zadd("alarms", parsed.epoch, message);
       socket.emit("send-alarm", parsed, function(data) {
       });
+    });
 
-      var high = 100, low = 0;
-      var val = Math.random() * (high - low) + low;
-
-      socket.emit("publish", val, function(data) {
+    client3.on("message", function (channel, message) {
+      socket.emit("publish", message, function(data) {
         console.log('publish: ' + data);
       });
     });
-
-    /*
-    client3.on("message", function (channel, message) {
-      socket.emit("alarm", message, function(data) {
-        console.log('alarm: ' + data);
+    client2.on("message", function (channel, message) {
+      var json = JSON.parse(message);
+      socket.emit("spark-bypref", json, function(data) {
       });
     });
-    */
+
 });
 
 http.listen(3000, function(){

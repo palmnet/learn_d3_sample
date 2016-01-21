@@ -109,8 +109,7 @@ function loadMap(target) {
     if (error) return console.error(error);
     onLoadMap(uk);
 
-    image_g = all_g.append("g")
-      .attr("id", "all-g")
+    image_g = d3.selectAll("#all-g")
       .append("g")
       .attr("id","image-g")
 
@@ -254,27 +253,27 @@ function loadMap(target) {
 
   function changeSize(width, height) {
       var duration = 0;
-
       d3.selectAll("#image-g image")
       .call(function(elem) {
-
-      var w = elem.attr("width");
-      var h = elem.attr("height");
-        elem.transition()
-          .delay(2000)
-          .duration(duration)
-          .attr('width', width)
-          .attr('height', height)
-          .attr("transform", function(d) { 
-            var coord = projection([d[0], d[1]]);
-            coord = [coord[0]-(width/2), coord[1]-(height/2)];
-            return "translate(" + coord.join(",") + ")"; 
-          })
-          .each('end', function(d, i) {
-              var nextWidth = (width == 50)? 10 : 50; 
-              var nextHeight= (height== 50)? 10 : 50; 
-              changeSize(nextWidth, nextHeight);
-          });
+        if(elem !== null) {
+          var w = elem.attr("width");
+          var h = elem.attr("height");
+            elem.transition()
+              .delay(2000)
+              .duration(duration)
+              .attr('width', width)
+              .attr('height', height)
+              .attr("transform", function(d) { 
+                var coord = projection([d[0], d[1]]);
+                coord = [coord[0]-(width/2), coord[1]-(height/2)];
+                return "translate(" + coord.join(",") + ")"; 
+              })
+              .each('end', function(d, i) {
+                  var nextWidth = (width == 50)? 10 : 50; 
+                  var nextHeight= (height== 50)? 10 : 50; 
+                  changeSize(nextWidth, nextHeight);
+              });
+        }
       });
   }
 

@@ -30,10 +30,10 @@
         </div><!-- /.col -->
         <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box">
-            <span class="info-box-icon bg-blue"><i class="fa fa-plus-circle"></i></span>
+            <span class="info-box-icon bg-blue"><i class="fa fa-line-chart"></i></span>
             <div class="info-box-content">
-              <span class="info-box-text">Recovery</span>
-              <span class="info-box-number">2</span>
+              <span class="info-box-text">Per Sec.</span>
+              <span class="info-box-number" id="alarm_per_sec">0</span>
             </div><!-- /.info-box-content -->
           </div><!-- /.info-box -->
         </div><!-- /.col -->
@@ -62,3 +62,32 @@
         <!-- /.col -->
 			</div>
 			<!-- /.row -->
+
+			<div class="row">
+        <div class="col-md-4">
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title">Top10 Pref</h3>
+              <div class="box-tools pull-right">
+							  <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+              <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <table id="table-top10pref" class="table table-bordered" style="font-size:9pt">
+                  <thead>
+                  </thead>
+                  <tbody style="height:1px">
+                  </tbody>
+                </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+			</div>
+			<!-- /.row -->
+

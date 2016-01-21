@@ -1,9 +1,47 @@
 (function ($, AdminLTE) {
   "use strict";
-
   
+  var socket = io.connect();
+  socket.on('publish', function(value, fn) {
+    init_top10pref();
+  });
+
   var init_bg_color = $(".content").css("background-color");
 
+  function _refresh_tables(data, columns) {
+
+    var table = d3.select('#table-top10pref>tbody')
+        .selectAll('tr')
+        .data(data);
+      table.enter().append('tr');
+      table.exit().remove();
+      var cells = table.selectAll('td')
+        .data(function(row) { 
+          return columns.map(function(key) {
+            return {key: key, value: row[key]};
+          });
+        });
+      cells.enter()
+        .append('td')
+        .text(function(d) { return d.value });
+      cells.text(function(d) { return d.value });
+      cells.exit().remove();
+  }
+
+  function init_top10pref() {
+    var columns = ["pref", "count"];
+    d3.json("/top10pref", function(error, data){
+      var thead = d3.select('#table-top10pref>thead')
+      var th = thead.selectAll("th")
+              .data(columns)
+
+      th.enter().append("th");
+          th.text(function(d) { return d });
+      th.exit().remove()
+
+      _refresh_tables(data, columns);
+    });
+  }
 
   function openMap() {
     $(".content-header").hide();
@@ -42,6 +80,7 @@
         closeMap();
         if(elem.attr('id') == 'dashboard') {
           init_alarms();
+          init_top10pref();
         }
         else if(elem.attr('id') == 'alarms') {
           init_tables();
@@ -55,6 +94,5 @@
     });
     
   });
-
   $("#dashboard").click();
 })(jQuery, $.AdminLTE);
