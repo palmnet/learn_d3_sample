@@ -3,6 +3,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var d3 = require("d3");
+var session = require('express-session'); 
 var redis = require("redis"),
   redis_cli = redis.createClient(),
   client2 = redis.createClient(),
@@ -46,68 +47,91 @@ app.get('/init_alarms', function(req, res){
     res.json(parsed);
   });
 });
-app.get('/top10pref', function(req, res){
-  client2.zrevrange('pref', 0, 10, 'withscores', function(err, members) {
+app.get('/top10/:name', function(req, res){
+  var name = req.params.name;
+  client2.zrevrange(name, 0, 10, 'withscores', function(err, members) {
     if(err) {
       return;
     }
     var results = [];
     for(var i=0; i<members.length; i+=2) {
-      var row = {pref: members[i], count: members[i+1]};
+      var row = {count: members[i+1]};
+      row[name] = members[i];
       results.push(row);
     }
-    console.log(results);
     res.json(results);
   });
 });
 
+// SessionController start
+function SessionController() {
+  this.ch_spark = redis.createClient();
+  this.ch_alarm = redis.createClient();
+  this.redis_cli = redis.createClient();
+};
 
+SessionController.prototype.subscribe = function(socket) {
+  console.log("subscribe:" + socket.id);
 
-client3.subscribe("spark-alarm");
-client4.subscribe("send-alarm");
-    
+  // subscribe
+  this.ch_spark.subscribe('spark-alarm');
+  this.ch_alarm.subscribe('send-alarm');
+
+  // raw alarm 
+  var current = this;
+  this.ch_alarm.on("message", function (channel, message) {
+    console.log(channel + ":" + message);
+
+    var parsed = JSON.parse(message)
+    current.redis_cli.zadd("alarms", parsed.epoch, message);
+    socket.emit("send-alarm", parsed, function(data) {
+    });
+
+    current.redis_cli.zcount("alarms", "-inf", "+inf", function(err, total) {
+      socket.emit("total-alarms", total, function(data) {
+      });
+    });
+  });
+
+  // spark summary alarm
+  this.ch_spark.on("message", function (channel, message) {
+    console.log(channel + ":" + message);
+    socket.emit("publish", message, function(data) {
+      console.log('publish: ' + data);
+    });
+  });
+};
+
+SessionController.prototype.unsubscribe = function() {
+  this.ch_spark.unsubscribe('spark-alarm');
+  this.ch_alarm.unsubscribe('send-alarm');
+};
+
+SessionController.prototype.destroy = function() {
+  if (this.ch_spark)  { this.ch_spark.quit(); }
+  if (this.ch_alarm)  { this.ch_spark.quit(); }
+  if (this.redis_cli) { this.redis_cli.quit();}
+};
+// SessionController end 
+
+// io.socket
 io.sockets.on('connection', function(socket) {
-		socket.on('disconnect', function () {
-			io.emit('user disconnected');
-		});
-  
-    /*
-    socket.emit('greeting', {message: 'hello'}, function (data) {
-      console.log('result: ' + data);
-    });
+  console.log(socket.id);
+  var session = socket.session;
+  if(session == null) {
+    session = new SessionController();
+    session.subscribe(socket);
+    socket.session = session;
+  }
 
-    client2.get("total-alarms", function(err, replies) {
-      socket.emit("total-alarms", replies, function(data) {
-        console.log("total-alarms-reply:" + data);
-      });
-    });
-
-    socket.on('reply', function(data) {
-      console.log('reply: ' + data);
-    });
-    */
-
-    client4.on("message", function (channel, message) {
-      var parsed = JSON.parse(message)
-      redis_cli.zadd("alarms", parsed.epoch, message);
-      socket.emit("send-alarm", parsed, function(data) {
-      });
-    });
-
-    client3.on("message", function (channel, message) {
-      socket.emit("publish", message, function(data) {
-        console.log('publish: ' + data);
-      });
-    });
-    client2.on("message", function (channel, message) {
-      var json = JSON.parse(message);
-      socket.emit("spark-bypref", json, function(data) {
-      });
-    });
-
+  socket.on('disconnect', function () {
+    session.unsubscribe();
+    session.destroy();
+  });
 });
 
+// express boot
 http.listen(3000, function(){
-    console.log('listening on *:3000');
+  console.log('listening on *:3000');
 });
 

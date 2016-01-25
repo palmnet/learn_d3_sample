@@ -1,5 +1,8 @@
 
 <style>
+body {
+  font-family: 'Noto Sans Japanese', serif;
+}
 .axis path,
 .axis line {
     fill: none;
@@ -17,20 +20,24 @@
   stroke-width:1.5px;
 }
 
+table {
+  font-size: 9pt;
+}
+
 </style>
       <div class="row">
         <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box">
             <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
             <div class="info-box-content">
-              <span class="info-box-text">Alarms Total</span>
-              <span class="info-box-number">0</span>
+              <span class="info-box-text">Totals</span>
+              <span class="info-box-number" id="totalAlarms">0</span>
             </div><!-- /.info-box-content -->
           </div><!-- /.info-box -->
         </div><!-- /.col -->
         <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box">
-            <span class="info-box-icon bg-blue"><i class="fa fa-line-chart"></i></span>
+            <span class="info-box-icon bg-green"><i class="fa fa-line-chart"></i></span>
             <div class="info-box-content">
               <span class="info-box-text">Per Sec.</span>
               <span class="info-box-number" id="alarm_per_sec">0</span>
@@ -41,10 +48,11 @@
 			<!-- /.row -->
 
 			<div class="row">
-        <div class="col-md-9">
-          <div class="box box-primary">
+        <div class="col-md-6">
+          <div class="box box-info">
             <div class="box-header with-border">
-              <h3 class="box-title">Alarms</h3>
+              <i class="fa fa-tachometer text-blue"></i>
+              <h3 class="box-title">Alarms Per Second</h3>
               <div class="box-tools pull-right">
 							  <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                 <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -63,10 +71,51 @@
 			</div>
 			<!-- /.row -->
 
+      <!-- alarm table -->
 			<div class="row">
-        <div class="col-md-4">
-          <div class="box box-primary">
+        <div class="col-md-12">
+          <div class="box box-danger">
             <div class="box-header with-border">
+              <i class="fa fa-exclamation-circle text-red"></i>
+              <h3 class="box-title">Alarms</h3>
+              <div class="box-tools pull-right">
+							  <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+              <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="result" style="font-size:8pt" class="table table-striped table-bordered row-border compact" cellspacing="0" width="100%">
+                  <thead>
+                      <tr>
+                          <th>Date</th>
+                          <th>Time</th>
+                          <th>Pref</th>
+                          <th>Build</th>
+                          <th>Bay</th>
+                          <th>Maker</th>
+                          <th>Eqp</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+			</div>
+			<!-- /.row -->
+
+
+			<div class="row">
+        <div class="col-md-3">
+          <div class="box box-success">
+            <div class="box-header with-border">
+              <i class="fa fa-trophy text-green"></i>
               <h3 class="box-title">Top10 Pref</h3>
               <div class="box-tools pull-right">
 							  <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -76,7 +125,7 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-                <table id="table-top10pref" class="table table-bordered" style="font-size:9pt">
+                <table id="table-top10-pref" class="table table-bordered" >
                   <thead>
                   </thead>
                   <tbody style="height:1px">
@@ -88,6 +137,55 @@
           <!-- /.box -->
         </div>
         <!-- /.col -->
+
+        <div class="col-md-3">
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <i class="fa fa-trophy text-blue"></i>
+              <h3 class="box-title">Top10 Equipment</h3>
+              <div class="box-tools pull-right">
+							  <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+              <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <table id="table-top10-eqp" class="table table-bordered">
+                  <thead>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+
+        <div class="col-md-6">
+          <div class="box ">
+            <div class="box-header with-border">
+              <i class="fa fa-map-pin" style="color:gray"></i>
+              <h3 class="box-title">Location</h3>
+              <div class="box-tools pull-right">
+							  <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+              <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div id=japanMap style="background-color: #222234" ></div>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+
+
 			</div>
 			<!-- /.row -->
 

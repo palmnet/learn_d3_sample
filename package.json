@@ -12,6 +12,7 @@
     "bower": "^1.7.2",
     "d3": "^3.5.12",
     "express": "^4.13.3",
+    "express-session": "^1.13.0",
     "grunt-cli": "^0.1.13",
     "node-redis": "^0.1.7",
     "nodemon": "^1.8.1",

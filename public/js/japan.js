@@ -108,7 +108,6 @@ function loadMap(target) {
   d3.json(topoJsonUrl, function(error, uk) {
     if (error) return console.error(error);
     onLoadMap(uk);
-
     image_g = d3.selectAll("#all-g")
       .append("g")
       .attr("id","image-g")
