@@ -165,7 +165,6 @@ DrawMap.prototype.addPoint = function(data, callback) {
     }
   };
 
-  console.log(data);
   current.all_g.selectAll("image")
     .data(data)
     .enter()
@@ -249,7 +248,7 @@ DrawMap.prototype.addPoint = function(data, callback) {
           //map.addPoint(removed);
         });
         socket.on('last-alarm', function(alarm, fn) {
-          map.addPoint(alarm);
+          //map.addPoint(alarm);
         });
       });
     });

@@ -67,6 +67,7 @@ app.get('/top10/:name', function(req, res){
 function SessionController() {
   this.ch_spark = redis.createClient();
   this.ch_alarm = redis.createClient();
+  this.ch_last = redis.createClient();
   this.redis_cli = redis.createClient();
 };
 
@@ -76,6 +77,7 @@ SessionController.prototype.subscribe = function(socket) {
   // subscribe
   this.ch_spark.subscribe('spark-alarm');
   this.ch_alarm.subscribe('send-alarm');
+  this.ch_last.subscribe('last-alarm');
 
   // raw alarm 
   var current = this;
@@ -100,6 +102,18 @@ SessionController.prototype.subscribe = function(socket) {
       console.log('publish: ' + data);
     });
   });
+
+  /*
+  this.ch_last.on("message", function (channel, message) {
+    console.log(channel + ":" + message);
+    var json = JSON.parse(message);
+    socket.emit("last-alarm", json, function(data) {
+      console.log('last-alarm: ' + data);
+    });
+  });
+  */
+
+
 };
 
 SessionController.prototype.unsubscribe = function() {
